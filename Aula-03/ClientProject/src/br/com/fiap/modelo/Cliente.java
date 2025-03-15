@@ -51,10 +51,10 @@ public class Cliente {
 
     public void displayClientInfo() {
         System.out.println("/////////////////////////////// Client Info ////////////////////////////////");
-        System.out.print("Name: " + name + "  ||  ");
-        System.out.print("Age: " + age + "  ||  ");
-        System.out.print("Email: " + email + "  ||  ");
-        System.out.println("Income: " + income + "  ||  ");
+        System.out.print("Name: " + getName() + "  ||  ");
+        System.out.print("Age: " + getAge() + "  ||  ");
+        System.out.print("Email: " + getEmail() + "  ||  ");
+        System.out.println("Income: " + getIncome() + "  ||  ");
         System.out.println("***************************************************************************");
     }
 }
