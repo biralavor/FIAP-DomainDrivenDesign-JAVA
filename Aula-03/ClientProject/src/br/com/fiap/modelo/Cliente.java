@@ -9,7 +9,7 @@ public class Cliente {
     private String  email;
     private float   income;
 
-    // Constructor
+    // Constructor Parameterization
     public Cliente(int age, String name, String email, float income) {
         this.age = age;
         this.name = name;
