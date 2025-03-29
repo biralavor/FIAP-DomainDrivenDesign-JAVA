@@ -6,8 +6,9 @@ public class TestBreadMaker {
         bread.displayInfo();
 
         bread.setMenu(3);
-        System.out.println("bread.setMenu(3);");
-
+        System.out.println("Setting Break Maker to recipe: 3");
         bread.displayInfoAll();
+        System.out.println("Starting recipe now");
+        bread.setStartRecipe(true);
     }
 }

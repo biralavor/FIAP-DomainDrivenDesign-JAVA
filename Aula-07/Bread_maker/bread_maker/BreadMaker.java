@@ -11,34 +11,41 @@ public class BreadMaker {
     private int minutes;
 
     public void title() {
+        char design;
+        design = '*';
+        if (getStart() == "ON")
+            design = '\\';
         for (int idx = 0; idx < 29; idx++)
-            System.out.print("*");
+            System.out.print(design);
         System.out.println();
         System.out.println("*\t\t BREAD MAKER \t\t*");
         for (int idx = 0; idx < 29; idx++)
-            System.out.print("*");
+            System.out.print(design);
         System.out.println();
     }
 
     public void setMenu(int recipe) {
         this.menu = recipe;
+        switch (recipe) {
+            case 1 -> setClock(3, 10);
+            case 2 -> setClock(4, 0);
+            case 3 -> setClock(0, 10);
+            default -> setClock(0, 0);
+        }
+        setStatus(true);
     }
 
     public String getMenu() {
-        switch (this.menu) {
-            case 1:
-                setClock(4, 0);
-                return "Frances";
-            case 2:
-                setClock(4, 0);
-                return "Integral";
-            case 3:
-                setClock(0, 15);
-                return "Cookies";
-            default:
-                setClock(0, 0);
-                return "Tipo de receita não encontrada.";
-        }
+        return switch (this.menu) {
+            case 1 -> "Frances";
+            case 2 -> "Integral";
+            case 3 -> "Cookies";
+            default -> "Tipo de receita não encontrada.";
+        };
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getStatus() {
@@ -48,6 +55,19 @@ public class BreadMaker {
         else
             updated_status = "OFF";
         return updated_status;
+    }
+
+    public void setStartRecipe(boolean start) {
+        this.start = start;
+        if (start){
+            displayInfoAll();
+            System.out.print("Cooking the Recipe. Please wait.");
+            while (this.minutes-- > 1)
+                System.out.print(".");
+            System.out.println("BIIIIIP");
+            System.out.println("* Clock: " + getTimeClock());
+            System.out.println("Your Recipe \"" + this.menu + "\" is ready!");
+        }
     }
 
     public String getStart() {
