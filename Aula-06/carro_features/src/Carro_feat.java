@@ -8,6 +8,6 @@ public class Carro_feat {
 
     //Constructor method
     public Carro_feat(boolean status, int speed, float fuel, String model, String brand){
-        
+
     }
 }
