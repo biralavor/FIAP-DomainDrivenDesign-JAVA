@@ -59,14 +59,14 @@ public class BreadMaker {
 
     public void setStartRecipe(boolean start) {
         this.start = start;
-        int timeclock = (this.hour * 60) + this.minutes;
+        int timeleft = (this.hour * 60) + this.minutes;
         if (start){
             displayInfoAll();
             System.out.print("Cooking the Recipe. Please wait.");
-            while (timeclock-- > 1)
+            while (timeleft-- > 1)
                 System.out.print(".");
             System.out.println("BIIIIIP");
-            System.out.println("* Clock: " + timeclock);
+            System.out.println("* Clock: " + timeleft);
             System.out.println("Your Recipe \"" + this.menu + "\" is ready!");
         }
     }
