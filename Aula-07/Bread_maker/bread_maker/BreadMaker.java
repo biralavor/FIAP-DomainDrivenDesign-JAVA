@@ -67,7 +67,7 @@ public class BreadMaker {
                 System.out.print(".");
             System.out.println("BIIIIIP");
             System.out.println("* Clock: " + timeleft);
-            System.out.println("Your Recipe \"" + this.menu + "\" is ready!");
+            System.out.println("Your Recipe \"" + getMenu() + "\" is ready!");
         }
     }
 
