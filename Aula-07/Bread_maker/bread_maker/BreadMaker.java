@@ -1,5 +1,7 @@
 package bread_maker;
 
+import java.util.Scanner;
+
 import static java.util.EnumSet.range;
 
 public class BreadMaker {
@@ -9,6 +11,8 @@ public class BreadMaker {
     private String bread;
     private int hour;
     private int minutes;
+    private Scanner input;
+    private int userInput;
 
     public void title() {
         char design;
@@ -91,15 +95,28 @@ public class BreadMaker {
         return time;
     }
 
-    public void displayInfo() {
+    public void idleMode() {
         String result;
 
         title();
         result = "* Status: " + getStatus() + "\n" +
                 "* Start: " + getStart() + "\n" +
-                "* Menu: " + this.menu + "\n" +
+                "* Menu: \t1.Frances \t2.Integral \t3.Cookies" + "\n" +
                 "* Clock: " + getTimeClock() + "\n";
         System.out.println(result);
+        setUserInput();
+    }
+
+    public void setUserInput() {
+        input = new Scanner(System.in);
+        System.out.println("Choose an option for Menu: ");
+        int under_validation = input.nextInt();
+        if (under_validation > 0 && under_validation < 4)
+            this.userInput = under_validation;
+    }
+
+    public int getUserInput() {
+        return this.userInput;
     }
 
     public void displayInfoAll() {
