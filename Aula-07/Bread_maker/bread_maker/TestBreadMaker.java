@@ -6,7 +6,6 @@ public class TestBreadMaker {
         bread.idleMode();
 
         bread.setMenu(bread.getUserInput());
-        bread.displayInfoAll();
         System.out.println("Starting recipe now");
         bread.setStartRecipe(true);
     }

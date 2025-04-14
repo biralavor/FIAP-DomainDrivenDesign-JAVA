@@ -31,8 +31,8 @@ public class BreadMaker {
     public void setMenu(int recipe) {
         this.menu = recipe;
         switch (recipe) {
-            case 1 -> setClock(3, 10);
-            case 2 -> setClock(4, 0);
+            case 1 -> setClock(1, 10);
+            case 2 -> setClock(2, 0);
             case 3 -> setClock(0, 10);
             default -> setClock(0, 0);
         }
@@ -41,10 +41,19 @@ public class BreadMaker {
 
     public String getMenu() {
         return switch (this.menu) {
-            case 1 -> "Frances";
-            case 2 -> "Integral";
+            case 1 -> getRecipe(1);
+            case 2 -> getRecipe(2);
+            case 3 -> getRecipe(3);
+            default -> getRecipe(0);
+        };
+    }
+
+    private String getRecipe(int recipe) {
+        return switch (recipe) {
+            case 1 -> "White Bread (Brazilian 'french' bread)";
+            case 2 -> "Whole Grain Bread";
             case 3 -> "Cookies";
-            default -> "Tipo de receita não encontrada.";
+            default -> "Recipe not found.";
         };
     }
 
@@ -66,7 +75,7 @@ public class BreadMaker {
         int timeleft = (this.hour * 60) + this.minutes;
         if (start){
             displayInfoAll();
-            System.out.print("Cooking the Recipe. Please wait.");
+            System.out.print("Cooking the Recipe. Please wait.\n");
             while (timeleft-- > 1)
                 System.out.print(".");
             System.out.println("BIIIIIP");
@@ -101,7 +110,7 @@ public class BreadMaker {
         title();
         result = "* Status: " + getStatus() + "\n" +
                 "* Start: " + getStart() + "\n" +
-                "* Menu: \t1.Frances \t2.Integral \t3.Cookies" + "\n" +
+                "* Menu Options: \t1." + getRecipe(1) + "\t2." + getRecipe(2) + "\t3." + getRecipe(3) + "\n" +
                 "* Clock: " + getTimeClock() + "\n";
         System.out.println(result);
         setUserInput();
