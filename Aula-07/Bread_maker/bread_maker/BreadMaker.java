@@ -1,7 +1,7 @@
 package bread_maker;
 
 import java.util.Scanner;
-
+import java.awt.Toolkit;
 import static java.util.EnumSet.range;
 
 public class BreadMaker {
@@ -79,7 +79,7 @@ public class BreadMaker {
             while (timeleft-- > 1)
                 System.out.print(".");
             System.out.println("BIIIIIP");
-            System.out.println("* Clock: " + timeleft);
+            Toolkit.getDefaultToolkit().beep();
             System.out.println("Your Recipe \"" + getMenu() + "\" is ready!");
         }
     }
@@ -100,7 +100,7 @@ public class BreadMaker {
 
     public String getTimeClock() {
         String time;
-        time = String.valueOf(this.hour) + ":" + String.valueOf(this.minutes);
+        time = String.valueOf(this.hour) + "h" +  ":" + String.valueOf(this.minutes) + "min";
         return time;
     }
 
