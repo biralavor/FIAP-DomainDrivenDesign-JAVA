@@ -110,7 +110,10 @@ public class BreadMaker {
         title();
         result = "* Status: " + getStatus() + "\n" +
                 "* Start: " + getStart() + "\n" +
-                "* Menu Options: \t1." + getRecipe(1) + "\t2." + getRecipe(2) + "\t3." + getRecipe(3) + "\n" +
+                "* Menu Options:\n" +
+                "--->>>\t1." + getRecipe(1) + "\n" +
+                "--->>>\t2." + getRecipe(2) + "\n" +
+                "--->>>\t3." + getRecipe(3) + "\n" +
                 "* Clock: " + getTimeClock() + "\n";
         System.out.println(result);
         setUserInput();
