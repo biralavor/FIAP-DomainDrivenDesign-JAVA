@@ -41,7 +41,7 @@ public class Calculator {
     }
 
     public float multi(float nbr1, float nbr2) {
-        System.out.println("////// Let's MULT it: //////");
+        System.out.println("***** Let's PROD it: *****");
         float result = nbr1 * nbr2;
         return result;
     }
