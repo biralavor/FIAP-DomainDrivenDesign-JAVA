@@ -1,7 +1,7 @@
 // assets/js/source.js
 // Java source code and menu definitions
 
-export const javaFiles = {
+const javaFiles = {
   'cliente': `package br.com.fiap.modelo;
 
 public class Cliente {
@@ -272,8 +272,10 @@ public class BreadMaker {
 `
 };
 
-export const menuItems = [
+const menuItems = [
   { key: 'cliente', label: 'Cliente.java' },
   { key: 'calculator', label: 'Calculator.java' },
   { key: 'breadmaker', label: 'BreadMaker.java' }
 ];
+
+export { javaFiles, menuItems };

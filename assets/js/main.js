@@ -18,33 +18,33 @@ function renderTerminal() {
   const terminal = document.getElementById('terminal');
   let html = '';
   if (terminalState === 'menu') {
-    html += '<span style="color:#888">Use ↑/↓ to select, Enter/double-tap to run, → to view code.</span><br>';
+    html += '<span class="terminal-instruction">Use <span class="kbd">↑</span><span class="kbd">↓</span> to select, <span class="kbd">Enter</span>/double-tap to run, <span class="kbd">→</span> to view code.</span><br>';
     // Terminal printed menu with switch indicator
-    html += '<div id="terminal-menu-list" style="margin-top:18px;">';
+    html += '<div id="terminal-menu-list">';
     javaFilesList.forEach((file, idx) => {
-      html += `<div class="terminal-menu-item${idx===selectedFileIdx?' active':''}" data-idx="${idx}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">`;
-      html += `<span style="display:inline-block;width:18px;text-align:center;">${idx===selectedFileIdx?'▶':'&nbsp;'}</span>`;
+      html += `<div class="terminal-menu-item${idx===selectedFileIdx?' active':''}" data-idx="${idx}">`;
+      html += `<span class="switch-indicator">${idx===selectedFileIdx?'▶':'&nbsp;'}</span>`;
       html += `<span>${file.label}</span>`;
       html += '</div>';
     });
     html += '</div>';
-    html += '<br><span style="color:#ffb86c">' + javaFilesList[selectedFileIdx].brief + '</span>';
+    html += '<br><span class="file-description">' + javaFilesList[selectedFileIdx].brief + '</span>';
     // Mobile menu buttons (below for accessibility)
-    html += '<div class="mobile-menu-btns" style="margin-top:18px;">';
+    html += '<div class="mobile-menu-btns">';
     javaFilesList.forEach((file, idx) => {
       html += `<button class="mobile-menu-btn${idx===selectedFileIdx?' active':''}" data-idx="${idx}">${file.label}</button>\n`;
     });
     html += '</div>';
   } else if (terminalState === 'output') {
-    html += '<pre style="color:#ff5555;">' + lastOutputText + '</pre>';
-    html += '<br><span style="color:#888">[→] Check source code  |  [b] Back to menu</span>';
+    html += '<pre class="terminal-output">' + lastOutputText + '</pre>';
+    html += '<br><span class="terminal-instruction"><span class="kbd">→</span> Check source code  |  <span class="kbd">b</span> Back to menu</span>';
     html += '<div class="mobile-output-btns"><button id="mobile-source-btn">Check Source Code</button> <button id="mobile-back-btn">Back to Menu</button></div>';
   } else if (terminalState === 'source') {
-    html += '<pre style="color:#ff5555;">' + javaFiles[javaFilesList[selectedFileIdx].key] + '</pre>';
-    html += '<br><span style="color:#888">[←] Back to output  |  [b] Back to menu</span>';
+    html += '<pre class="terminal-output">' + javaFiles[javaFilesList[selectedFileIdx].key] + '</pre>';
+    html += '<br><span class="terminal-instruction"><span class="kbd">←</span> Back to output  |  <span class="kbd">b</span> Back to menu</span>';
     html += '<div class="mobile-source-btns"><button id="mobile-back-output-btn">Back to Output</button> <button id="mobile-back-menu-btn">Back to Menu</button></div>';
   } else if (terminalState === 'running') {
-    html += '<span style="color:#888">Running Java...</span>';
+    html += '<span class="terminal-instruction">Running Java<span class="loading-dots"></span></span>';
   }
   terminal.innerHTML = html;
 
@@ -83,9 +83,29 @@ function renderTerminal() {
   if (backOutputBtn) backOutputBtn.onclick = () => showOutput(lastOutputText);
   const backMenuBtn = document.getElementById('mobile-back-menu-btn');
   if (backMenuBtn) backMenuBtn.onclick = showMenu;
-  // Show/hide desktop source button
-  const btn = document.getElementById('show-source-btn');
-  if (btn) btn.style.display = (terminalState === 'output') ? 'inline-block' : 'none';
+}
+
+// Handle Java input requests for simulations
+function requestJavaInput(promptText) {
+  return new Promise(resolve => {
+    const dialog = document.createElement('div');
+    dialog.className = 'java-input-dialog';
+    dialog.innerHTML = `<div class="java-input-prompt">${promptText || 'Java program requests input:'}</div>
+      <input id="java-input" class="java-input-field" autofocus />
+      <button id="java-input-ok" class="java-input-btn">OK</button>`;
+    document.body.appendChild(dialog);
+    document.getElementById('java-input').focus();
+    document.getElementById('java-input-ok').onclick = () => {
+      const val = document.getElementById('java-input').value + '\n';
+      document.body.removeChild(dialog);
+      resolve(val);
+    };
+    document.getElementById('java-input').onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('java-input-ok').click();
+      }
+    };
+  });
 }
 
 function showMenu() {
@@ -159,4 +179,5 @@ window.addEventListener('DOMContentLoaded', function() {
 window.showOutput = showOutput;
 window.showMenu = showMenu;
 window.showSource = showSource;
+window.requestJavaInput = requestJavaInput;
 window.runJavaFile = (key, cb) => runJavaFile(key).then(cb);

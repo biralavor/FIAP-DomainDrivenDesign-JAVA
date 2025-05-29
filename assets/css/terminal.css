@@ -32,6 +32,57 @@
   color: #ff5555;
   font-weight: bold;
 }
+.terminal-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.terminal-menu-item.active {
+  color: #ff5555;
+  font-weight: bold;
+}
+#terminal-menu-list {
+  margin-top: 18px;
+}
+.mobile-menu-btns {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mobile-menu-btn {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+.mobile-menu-btn.active {
+  background-color: #ff5555;
+}
+.mobile-output-btns, .mobile-source-btns {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mobile-output-btns button, .mobile-source-btns button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.switch-indicator {
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+}
 .menu {
   margin-top: 8px;
   display: flex;
@@ -77,6 +128,120 @@
 .run-btn:hover {
   background-color: #218838;
 }
+.terminal-instruction {
+  color: #888;
+}
+.file-description {
+  color: #ffb86c;
+}
+.terminal-output {
+  color: #ff5555;
+}
 .hidden {
   display: none;
+}
+
+.java-input-dialog {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  padding: 24px 32px;
+  border-radius: 8px;
+  z-index: 9999;
+  color: #fff;
+  box-shadow: 0 0 16px #ff5555cc;
+}
+
+.java-input-prompt {
+  margin-bottom: 12px;
+}
+
+.java-input-field {
+  width: 220px;
+  padding: 8px;
+  font-size: 1em;
+}
+
+.java-input-btn {
+  margin-left: 12px;
+  padding: 8px 16px;
+  background-color: #ff5555;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Terminal Menu Enhancements */
+.terminal-menu-item:hover {
+  color: #ff8888;
+}
+
+.switch-indicator {
+  color: #ff5555;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  #terminal {
+    padding: 16px;
+    min-height: 350px;
+    margin-top: 20px;
+    width: 90%;
+  }
+  
+  .mobile-menu-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .mobile-menu-btn {
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+  
+  .mobile-output-btns button, 
+  .mobile-source-btns button {
+    padding: 12px 16px;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .ansi-title {
+    font-size: 2em;
+  }
+}
+
+/* Run button animations */
+.run-btn:active {
+  transform: scale(0.95);
+}
+
+/* Loading animation */
+.loading-dots {
+  display: inline-block;
+}
+
+.loading-dots:after {
+  content: '.';
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60% {
+    content: '...';
+  }
+  80%, 100% {
+    content: '';
+  }
 }
