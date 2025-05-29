@@ -7,7 +7,7 @@ export let inMenu = true;
 
 export function renderPromptMenu() {
   const menu = menuItems.map((item, idx) =>
-    `<div class="prompt-item${idx===menuIndex?' active':''}">${idx===menuIndex?'▶ ':'&nbsp;&nbsp;'}${item.label}</div>`
+    `<div class="prompt-item${idx===menuIndex?' active':''}" data-idx="${idx}">${idx===menuIndex?'▶ ':'&nbsp;&nbsp;'}${item.label}</div>`
   ).join('');
   document.getElementById('prompt-menu').innerHTML = menu;
 }
@@ -19,6 +19,9 @@ export function showCode(key) {
   document.querySelectorAll('.menu button').forEach(btn => btn.classList.remove('active'));
   const btn = document.getElementById('btn-' + key);
   if (btn) btn.classList.add('active');
+  // Sync menuIndex with button
+  const idx = menuItems.findIndex(item => item.key === key);
+  if (idx !== -1) menuIndex = idx;
 }
 
 export function showMenu() {
@@ -57,13 +60,27 @@ export function setupTerminalNavigation(runJavaFile) {
       }
     }
   });
+  // Allow clicking prompt items
+  document.getElementById('terminal').addEventListener('click', function(e) {
+    if (e.target.classList.contains('prompt-item')) {
+      const idx = parseInt(e.target.getAttribute('data-idx'));
+      if (!isNaN(idx)) {
+        menuIndex = idx;
+        showCode(menuItems[menuIndex].key);
+      }
+    }
+  });
 }
 
 export function setupMenuButtons(runJavaFile) {
-  // Use the showCode function from this module
-  menuItems.forEach(item => {
+  menuItems.forEach((item, idx) => {
     const btn = document.getElementById('btn-' + item.key);
-    if (btn) btn.onclick = () => showCode(item.key);
+    if (btn) {
+      btn.onclick = () => {
+        menuIndex = idx;
+        showCode(item.key);
+      };
+    }
   });
   // Add Run button
   let runBtn = document.querySelector('.run-btn');
@@ -74,12 +91,7 @@ export function setupMenuButtons(runJavaFile) {
     document.querySelector('.menu').appendChild(runBtn);
   }
   runBtn.onclick = () => {
-    // Use the currently active menu item index
-    let idx = 0;
-    const active = document.querySelector('.prompt-item.active');
-    if (active) {
-      idx = Array.from(document.querySelectorAll('.prompt-item')).indexOf(active);
-    }
+    let idx = menuIndex;
     runJavaFile(menuItems[idx].key);
   };
 }

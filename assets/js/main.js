@@ -8,6 +8,7 @@ let inMenu = true;
 
 // Initial render
 showMenu();
+renderPromptMenu();
 setupTerminalNavigation(runJavaFile);
 setupMenuButtons(runJavaFile);
 
