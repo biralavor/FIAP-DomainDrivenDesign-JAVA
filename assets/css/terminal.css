@@ -34,6 +34,22 @@
   margin-top: 8px;
   display: flex;
   gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .menu {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 0 auto 12px auto;
+  }
+  .menu button {
+    width: 90vw;
+    max-width: 350px;
+    font-size: 1.1em;
+  }
 }
 .menu button {
   background-color: #333;
