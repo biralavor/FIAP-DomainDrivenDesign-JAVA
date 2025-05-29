@@ -11,11 +11,12 @@
 class JavaStreamManager {
   constructor() {
     // Stream buffers
-    this.stdout = "";      // Output buffer
-    this.stderr = "";      // Error buffer
+    this.stdout = "";      // Standard output buffer
+    this.stderr = "";      // Standard error buffer
+    this.stdin = "";       // Standard input buffer
     
     // Event listeners
-    this.inputListeners = [];    // Listeners for input requests
+    this.inputListeners = [];    // Listeners for input requests 
     this.outputListeners = [];   // Listeners for output events
     this.errorListeners = [];    // Listeners for error events
     
@@ -24,194 +25,154 @@ class JavaStreamManager {
     this.inputResolver = null;
     this.inputPrompt = "";
     
-    // Flags
+    // Stream state
     this.isInitialized = false;
+    this.isClosed = false;
   }
-  
-  /**
-   * Initialize the stream manager and register event handlers
-   * @param {Object} options Configuration options
-   */
+
+  // Initialize stream manager
   initialize(options = {}) {
     if (this.isInitialized) return this;
     
-    // Register event handlers if provided
-    if (options.onInputRequest && typeof options.onInputRequest === 'function') {
-      this.addInputListener(options.onInputRequest);
-    }
-    
-    if (options.onOutput && typeof options.onOutput === 'function') {
-      this.addOutputListener(options.onOutput);
-    }
-    
-    if (options.onError && typeof options.onError === 'function') {
-      this.addErrorListener(options.onError);
-    }
+    // Register handlers
+    if (options.onInputRequest) this.addInputListener(options.onInputRequest);
+    if (options.onOutput) this.addOutputListener(options.onOutput);
+    if (options.onError) this.addErrorListener(options.onError);
     
     this.isInitialized = true;
     return this;
   }
-  
-  /**
-   * Add a listener for input requests (when Java code needs user input)
-   * @param {Function} listener Callback function that handles input requests
-   */
+
+  // Add input request listener
   addInputListener(listener) {
     if (typeof listener === 'function') {
       this.inputListeners.push(listener);
     }
     return this;
   }
-  
-  /**
-   * Add a listener for output events (when Java code writes to stdout)
-   * @param {Function} listener Callback function that handles output
-   */
+
+  // Add output listener
   addOutputListener(listener) {
     if (typeof listener === 'function') {
       this.outputListeners.push(listener);
     }
     return this;
   }
-  
-  /**
-   * Add a listener for error events (when Java code writes to stderr)
-   * @param {Function} listener Callback function that handles errors
-   */
+
+  // Add error listener
   addErrorListener(listener) {
     if (typeof listener === 'function') {
       this.errorListeners.push(listener);
     }
     return this;
   }
-  
-  /**
-   * Write to the standard output stream (simulates System.out.print in Java)
-   * @param {string} text Text to write to stdout
-   */
+
+  // Write to stdout
   writeOutput(text) {
+    if (this.isClosed) return this;
+    
     this.stdout += text;
-    
-    // Notify all output listeners
-    for (const listener of this.outputListeners) {
-      listener(text);
-    }
-    
+    // Notify listeners
+    this.outputListeners.forEach(listener => listener(text));
     return this;
   }
-  
-  /**
-   * Write to the error output stream (simulates System.err.print in Java)
-   * @param {string} text Text to write to stderr
-   */
+
+  // Write to stderr
   writeError(text) {
+    if (this.isClosed) return this;
+    
     this.stderr += text;
-    
-    // Notify all error listeners
-    for (const listener of this.errorListeners) {
-      listener(text);
-    }
-    
+    // Notify listeners
+    this.errorListeners.forEach(listener => listener(text));
     return this;
   }
-  
-  /**
-   * Request input from the user (simulates Scanner.nextLine() in Java)
-   * @param {string} prompt Prompt to display to the user
-   * @returns {Promise<string>} Promise that resolves with user input
-   */
-  requestInput(prompt = "") {
+
+  // Request user input
+  async requestInput(prompt = "") {
+    if (this.isClosed) throw new Error("Stream is closed");
+    
     this.inputRequested = true;
     this.inputPrompt = prompt;
     
-    return new Promise((resolve) => {
-      this.inputResolver = resolve;
+    try {
+      // Get input from listeners or global handler
+      if (this.inputListeners.length > 0) {
+        const promises = this.inputListeners.map(listener => listener(prompt));
+        const results = await Promise.all(promises);
+        const input = results.find(result => result !== undefined);
+        
+        if (input !== undefined) {
+          this.inputRequested = false;
+          this.inputResolver = null;
+          return input;
+        }
+      }
       
-      // Notify all input request listeners
-      const promises = this.inputListeners.map(listener => listener(prompt));
-      
-      // If we have listeners, use their response
-      if (promises.length > 0) {
-        Promise.all(promises)
-          .then(results => {
-            // Use the first non-undefined result
-            const input = results.find(result => result !== undefined);
-            if (input !== undefined) {
-              this.inputRequested = false;
-              this.inputResolver = null;
-              resolve(input);
-            }
-          });
-      } else if (window.requestJavaInput) {
-        // Fallback to global requestJavaInput if available
-        window.requestJavaInput(prompt)
-          .then(input => {
-            this.inputRequested = false;
-            this.inputResolver = null;
-            resolve(input);
-          });
-      } else {
-        // If no input handlers are available, log an error and return a default
-        console.error("No input handlers registered and no global requestJavaInput function found");
+      // Fallback to global handler
+      if (window.requestJavaInput) {
+        const input = await window.requestJavaInput(prompt);
         this.inputRequested = false;
         this.inputResolver = null;
-        resolve("default\n");
+        return input;
       }
-    });
-  }
-  
-  /**
-   * Provide input to resolve a pending input request
-   * @param {string} input Input text from the user
-   */
-  provideInput(input) {
-    if (this.inputRequested && this.inputResolver) {
-      const resolver = this.inputResolver;
+      
+      throw new Error("No input handler available");
+    } catch (error) {
       this.inputRequested = false;
       this.inputResolver = null;
-      resolver(input);
+      throw error;
     }
+  }
+
+  // Provide input directly
+  provideInput(input) {
+    if (!this.inputRequested || !this.inputResolver) return this;
+    
+    const resolver = this.inputResolver;
+    this.inputRequested = false;
+    this.inputResolver = null;
+    resolver(input);
     return this;
   }
-  
-  /**
-   * Get the current contents of the standard output buffer
-   * @returns {string} Current stdout content
-   */
+
+  // Get stdout contents
   getOutput() {
     return this.stdout;
   }
-  
-  /**
-   * Get the current contents of the error output buffer
-   * @returns {string} Current stderr content
-   */
+
+  // Get stderr contents  
   getError() {
     return this.stderr;
   }
-  
-  /**
-   * Clear all stream buffers
-   */
+
+  // Clear all buffers
   clearBuffers() {
     this.stdout = "";
     this.stderr = "";
+    this.stdin = "";
     return this;
   }
-  
-  /**
-   * Reset the stream manager to its initial state
-   */
+
+  // Reset to initial state
   reset() {
     this.clearBuffers();
     this.inputRequested = false;
     this.inputResolver = null;
     this.inputPrompt = "";
+    this.isClosed = false;
+    return this;
+  }
+
+  // Close streams
+  close() {
+    this.isClosed = true;
+    this.inputRequested = false;
+    this.inputResolver = null;
     return this;
   }
 }
 
-// Create a singleton instance
+// Create singleton instance
 const javaStreams = new JavaStreamManager();
 
 export { javaStreams };
