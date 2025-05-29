@@ -133,7 +133,7 @@ public class BreadMaker {
     public void title() {
         char design;
         design = '*';
-        if (getStart() == "ON")
+        if (getStart().equals("ON"))
             design = '\\';
         for (int idx = 0; idx < 29; idx++)
             System.out.print(design);
