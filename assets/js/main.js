@@ -18,16 +18,23 @@ function renderTerminal() {
   const terminal = document.getElementById('terminal');
   let html = '';
   if (terminalState === 'menu') {
-    html += '<span style="color:#888">Use ↑/↓ to select, Enter to run, → to view code.</span><br>';
-    html += '<div class="mobile-menu-btns">';
+    html += '<span style="color:#888">Use ↑/↓ to select, Enter/double-tap to run, → to view code.</span><br>';
+    // Terminal printed menu with switch indicator
+    html += '<div id="terminal-menu-list" style="margin-top:18px;">';
     javaFilesList.forEach((file, idx) => {
-      html += `<button class="mobile-menu-btn${idx===selectedFileIdx?' active':''}" data-idx="${idx}">${file.label}</button><br>`;
+      html += `<div class="terminal-menu-item${idx===selectedFileIdx?' active':''}" data-idx="${idx}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">`;
+      html += `<span style="display:inline-block;width:18px;text-align:center;">${idx===selectedFileIdx?'▶':'&nbsp;'}</span>`;
+      html += `<span>${file.label}</span>`;
+      html += '</div>';
     });
     html += '</div>';
-    javaFilesList.forEach((file, idx) => {
-      html += (idx === selectedFileIdx ? '<b style="color:#ff5555">▶ ' : '&nbsp;&nbsp;') + file.label + (idx === selectedFileIdx ? '</b>' : '') + '<br>';
-    });
     html += '<br><span style="color:#ffb86c">' + javaFilesList[selectedFileIdx].brief + '</span>';
+    // Mobile menu buttons (below for accessibility)
+    html += '<div class="mobile-menu-btns" style="margin-top:18px;">';
+    javaFilesList.forEach((file, idx) => {
+      html += `<button class="mobile-menu-btn${idx===selectedFileIdx?' active':''}" data-idx="${idx}">${file.label}</button>\n`;
+    });
+    html += '</div>';
   } else if (terminalState === 'output') {
     html += '<pre style="color:#ff5555;">' + lastOutputText + '</pre>';
     html += '<br><span style="color:#888">[→] Check source code  |  [b] Back to menu</span>';
@@ -41,6 +48,19 @@ function renderTerminal() {
   }
   terminal.innerHTML = html;
 
+  // Terminal menu item click (desktop & mobile)
+  document.querySelectorAll('.terminal-menu-item').forEach(item => {
+    item.onclick = function() {
+      selectedFileIdx = parseInt(item.getAttribute('data-idx'));
+      renderTerminal();
+    };
+    item.ondblclick = function() {
+      selectedFileIdx = parseInt(item.getAttribute('data-idx'));
+      terminalState = 'running';
+      renderTerminal();
+      window.runJavaFile(javaFilesList[selectedFileIdx].key, showOutput);
+    };
+  });
   // Mobile menu button logic
   document.querySelectorAll('.mobile-menu-btn').forEach(btn => {
     btn.onclick = function() {
@@ -51,7 +71,7 @@ function renderTerminal() {
       selectedFileIdx = parseInt(btn.getAttribute('data-idx'));
       terminalState = 'running';
       renderTerminal();
-      runJavaFile(javaFilesList[selectedFileIdx].key, showOutput);
+      window.runJavaFile(javaFilesList[selectedFileIdx].key, showOutput);
     };
   });
   // Mobile output/source navigation
@@ -85,7 +105,7 @@ function showSource() {
 }
 
 // Keyboard navigation
-function listenForKeys(runJavaFile) {
+function listenForKeys() {
   document.addEventListener('keydown', function(e) {
     if (terminalState === 'menu') {
       if (e.key === 'ArrowUp') {
@@ -97,7 +117,7 @@ function listenForKeys(runJavaFile) {
       } else if (e.key === 'Enter') {
         terminalState = 'running';
         renderTerminal();
-        runJavaFile(javaFilesList[selectedFileIdx].key, showOutput);
+        window.runJavaFile(javaFilesList[selectedFileIdx].key, showOutput);
       } else if (e.key === 'ArrowRight') {
         showSource();
       }
@@ -129,11 +149,11 @@ window.addEventListener('DOMContentLoaded', function() {
     btn.onclick = showSource;
     document.body.appendChild(btn);
   }
-});
 
-// Initial render
-showMenu();
-listenForKeys(runJavaFile);
+  // Initial render and event setup after DOM is ready
+  showMenu();
+  listenForKeys();
+});
 
 // Expose for Java runner
 window.showOutput = showOutput;
