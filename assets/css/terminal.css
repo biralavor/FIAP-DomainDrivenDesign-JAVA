@@ -1,0 +1,53 @@
+/* assets/css/terminal.css */
+#terminal {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #1e1e1e;
+  color: #dcdcdc;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre;
+  position: relative;
+}
+#terminal:focus {
+  outline: none;
+}
+.prompt-item {
+  padding: 4px 0;
+  cursor: pointer;
+}
+.prompt-item.active {
+  color: #ff5555;
+  font-weight: bold;
+}
+.menu {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.menu button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.menu button.active {
+  background-color: #ff5555;
+}
+.run-btn {
+  margin-left: auto;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.run-btn:hover {
+  background-color: #218838;
+}
+.hidden {
+  display: none;
+}
