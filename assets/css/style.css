@@ -16,52 +16,9 @@ body {
   text-align: center;
   letter-spacing: 2px;
 }
-.terminal {
-  background: #2d0000;
-  border-radius: 8px;
-  box-shadow: 0 0 16px #ff5555cc;
-  padding: 24px;
-  margin: 0 auto 32px auto;
-  max-width: 700px;
-  min-height: 300px;
-  color: #ff5555;
-  font-size: 1.1em;
-  font-family: 'Fira Mono', monospace;
-  position: relative;
-}
-.menu {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.menu button {
-  background: #ff5555;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.menu button.active, .menu button:hover {
-  background: #ff2222;
-}
 .footer {
   text-align: center;
   color: #888;
   margin-top: 40px;
   font-size: 0.9em;
-}
-.prompt-item {
-  color: #ff5555;
-  padding: 2px 0;
-  font-family: inherit;
-  font-size: 1em;
-  transition: background 0.15s, color 0.15s;
-}
-.prompt-item.active {
-  background: #ff555522;
-  color: #fff;
 }
