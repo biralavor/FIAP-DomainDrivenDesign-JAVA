@@ -139,3 +139,4 @@ listenForKeys(runJavaFile);
 window.showOutput = showOutput;
 window.showMenu = showMenu;
 window.showSource = showSource;
+window.runJavaFile = (key, cb) => runJavaFile(key).then(cb);
