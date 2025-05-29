@@ -8,7 +8,8 @@ let jvmInstance = null;
 export async function ensureJvm() {
   if (jvmReady) return jvmInstance;
   if (!window.WasmJvm) {
-    alert('Wasm JVM not loaded!');
+    const terminal = document.getElementById('terminal');
+    terminal.innerHTML = '<span style="color:red">Error: Wasm JVM not loaded!</span>';
     return null;
   }
   jvmInstance = await WasmJvm.create();
