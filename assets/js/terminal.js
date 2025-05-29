@@ -60,6 +60,7 @@ export function setupTerminalNavigation(runJavaFile) {
 }
 
 export function setupMenuButtons(runJavaFile) {
+  // Use the showCode function from this module
   menuItems.forEach(item => {
     const btn = document.getElementById('btn-' + item.key);
     if (btn) btn.onclick = () => showCode(item.key);
@@ -72,5 +73,13 @@ export function setupMenuButtons(runJavaFile) {
     runBtn.className = 'run-btn';
     document.querySelector('.menu').appendChild(runBtn);
   }
-  runBtn.onclick = () => runJavaFile(menuItems[menuIndex].key);
+  runBtn.onclick = () => {
+    // Use the currently active menu item index
+    let idx = 0;
+    const active = document.querySelector('.prompt-item.active');
+    if (active) {
+      idx = Array.from(document.querySelectorAll('.prompt-item')).indexOf(active);
+    }
+    runJavaFile(menuItems[idx].key);
+  };
 }

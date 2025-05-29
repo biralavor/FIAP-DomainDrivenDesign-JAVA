@@ -1,5 +1,4 @@
 // Import modules
-import { javaFiles, menuItems } from './source.js';
 import { renderPromptMenu, showCode, showMenu, setupTerminalNavigation, setupMenuButtons } from './terminal.js';
 import { runJavaFile } from './wasm-jvm.js';
 
