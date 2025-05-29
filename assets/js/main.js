@@ -1,5 +1,6 @@
 // Import modules
-import { runJavaFile } from './wasm-jvm.js';
+import { runJavaFile, javaVM } from './wasm-jvm.js';
+import { javaStreams } from './jvm-streams.js';
 // --- Add: Import Java source code for source view ---
 import { javaFiles } from './source.js';
 
@@ -87,6 +88,16 @@ function renderTerminal() {
 
 // Handle Java input requests for simulations
 function requestJavaInput(promptText) {
+  // Show input prompt state on terminal
+  if (terminalState === 'running') {
+    const terminal = document.getElementById('terminal');
+    terminal.innerHTML = `
+      <span class="terminal-instruction">Java program is waiting for input:</span>
+      <pre class="terminal-output">${promptText || 'Enter input:'}</pre>
+      <span class="input-indicator">▌</span>
+    `;
+  }
+  
   return new Promise(resolve => {
     const dialog = document.createElement('div');
     dialog.className = 'java-input-dialog';
@@ -98,6 +109,16 @@ function requestJavaInput(promptText) {
     document.getElementById('java-input-ok').onclick = () => {
       const val = document.getElementById('java-input').value + '\n';
       document.body.removeChild(dialog);
+      
+      // Update terminal to show the input being processed
+      if (terminalState === 'running') {
+        const terminal = document.getElementById('terminal');
+        terminal.innerHTML = `
+          <span class="terminal-instruction">Processing input...</span>
+          <span class="loading-dots"></span>
+        `;
+      }
+      
       resolve(val);
     };
     document.getElementById('java-input').onkeydown = (e) => {
@@ -169,6 +190,11 @@ window.addEventListener('DOMContentLoaded', function() {
     btn.onclick = showSource;
     document.body.appendChild(btn);
   }
+
+  // Initialize Java streams manager with our input handler
+  javaStreams.initialize({
+    onInputRequest: promptText => window.requestJavaInput(promptText)
+  });
 
   // Initial render and event setup after DOM is ready
   showMenu();

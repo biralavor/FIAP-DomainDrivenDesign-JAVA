@@ -152,16 +152,23 @@
   z-index: 9999;
   color: #fff;
   box-shadow: 0 0 16px #ff5555cc;
+  border: 2px solid #ff5555;
 }
 
 .java-input-prompt {
   margin-bottom: 12px;
+  font-family: 'Fira Mono', monospace;
+  color: #ff7777;
 }
 
 .java-input-field {
   width: 220px;
   padding: 8px;
   font-size: 1em;
+  background: #333;
+  color: #fff;
+  border: 1px solid #ff5555;
+  border-radius: 4px;
 }
 
 .java-input-btn {
@@ -172,6 +179,7 @@
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 /* Terminal Menu Enhancements */
@@ -244,4 +252,16 @@
   80%, 100% {
     content: '';
   }
+}
+
+/* Input indicator for Java terminal */
+.input-indicator {
+  display: inline-block;
+  color: #ff9999;
+  font-weight: bold;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }

@@ -56,19 +56,6 @@ async function runJavaFile(key) {
   }
   
   return output;
-  });
-  // Run the class (assumes main method)
-  try {
-    const result = await jvm.exec({
-      className: 'RunClass',
-      classPath: ['/tmp'],
-      args: []
-    });
-    return output;
-  } catch (err) {
-    output += '\n[Java Error] ' + err;
-    return output;
-  }
 }
 
 export { runJavaFile };

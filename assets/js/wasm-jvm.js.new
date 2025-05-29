@@ -1,0 +1,250 @@
+// assets/js/wasm-jvm.js
+// Handles Wasm JVM integration and running Java class files
+import { javaFiles } from './source.js';
+import { javaStreams } from './jvm-streams.js';
+
+/**
+ * JavaVirtualMachine - Simulates a JVM environment for running Java code in the browser
+ * 
+ * This class provides an abstraction for running Java code in a web browser.
+ * It can be extended to use WebAssembly for real Java execution, but currently
+ * provides a simulation environment for demo purposes.
+ */
+class JavaVirtualMachine {
+  constructor() {
+    this.ready = false;
+    this.running = false;
+    this.classPath = [];
+    this.sourceCode = {};
+  }
+  
+  /**
+   * Initialize the JVM environment
+   */
+  async initialize() {
+    if (this.ready) return this;
+    
+    // Connect to the Java streams for I/O handling
+    javaStreams.initialize();
+    
+    this.ready = true;
+    return this;
+  }
+  
+  /**
+   * Load Java source code by key
+   * @param {string} key The identifier for the Java source code
+   */
+  loadSource(key) {
+    if (javaFiles[key]) {
+      this.sourceCode[key] = javaFiles[key];
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * Run a Java program by its key
+   * @param {string} key The identifier for the Java program to run
+   * @returns {Promise<string>} The output from the Java program execution
+   */
+  async runProgram(key) {
+    if (!this.ready) {
+      await this.initialize();
+    }
+    
+    // Load the source if not already loaded
+    if (!this.sourceCode[key]) {
+      this.loadSource(key);
+    }
+    
+    this.running = true;
+    javaStreams.clear();
+    
+    try {
+      // In a real implementation, this would compile and run actual Java bytecode
+      // For now, we'll implement a simulation based on the program key
+      
+      // The simulation just intercepts Java's standard I/O operations
+      // and doesn't reproduce any Java-specific logic from the actual code files
+      if (key === 'cliente') {
+        await this.runClienteSimulation();
+      } else if (key === 'calculator') {
+        await this.runCalculatorSimulation();
+      } else if (key === 'breadmaker') {
+        await this.runBreadMakerSimulation();
+      } else {
+        javaStreams.writeOutput(`Program '${key}' not found or not supported.\n`);
+      }
+      
+      this.running = false;
+      return javaStreams.getOutput();
+    } catch (error) {
+      javaStreams.writeError(`Error executing Java program: ${error.message}\n`);
+      this.running = false;
+      return javaStreams.getOutput() + javaStreams.getError();
+    }
+  }
+  
+  /**
+   * Generic method to simulate a Java program with multiple input prompts
+   * @param {Array} interactions Array of {prompt, response} objects describing the interaction
+   */
+  async runGenericInputOutputSimulation(interactions) {
+    for (const interaction of interactions) {
+      if (interaction.output) {
+        javaStreams.writeOutput(interaction.output);
+      }
+      
+      if (interaction.input) {
+        const userInput = await javaStreams.requestInput(interaction.input);
+        
+        // Process the input if a processor function is provided
+        if (interaction.process && typeof interaction.process === 'function') {
+          interaction.process(userInput);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Simulation of Cliente.java - Only handles I/O operations and not actual Java logic
+   */
+  async runClienteSimulation() {
+    javaStreams.writeOutput("Cliente.java - Scanner Input Simulation\n\n");
+    
+    // Capture user inputs for client data
+    const name = await javaStreams.requestInput("Enter client name:");
+    const age = await javaStreams.requestInput("Enter client age:");
+    const email = await javaStreams.requestInput("Enter client email:");
+    const income = await javaStreams.requestInput("Enter client income:");
+    
+    // Display the entered data
+    javaStreams.writeOutput("\n--- Client Information ---\n");
+    javaStreams.writeOutput(`Name: ${name.trim()}\n`);
+    javaStreams.writeOutput(`Age: ${age.trim()}\n`);
+    javaStreams.writeOutput(`Email: ${email.trim()}\n`);
+    javaStreams.writeOutput(`Income: ${income.trim()}\n`);
+    javaStreams.writeOutput("------------------------\n\n");
+    
+    // Simulate some additional interaction
+    const updateResponse = await javaStreams.requestInput("Would you like to update any information? (y/n)");
+    
+    if (updateResponse.trim().toLowerCase() === 'y') {
+      const fieldToUpdate = await javaStreams.requestInput("Which field? (name/age/email/income):");
+      const newValue = await javaStreams.requestInput(`Enter new ${fieldToUpdate}:`);
+      
+      javaStreams.writeOutput(`\nUpdated ${fieldToUpdate} to: ${newValue.trim()}\n`);
+    } else {
+      javaStreams.writeOutput("\nNo updates made. Client information saved.\n");
+    }
+  }
+  
+  /**
+   * Simulation of Calculator.java - Only handles I/O operations and not actual Java logic
+   */
+  async runCalculatorSimulation() {
+    javaStreams.writeOutput("Calculator.java - Scanner Input Simulation\n\n");
+    
+    // Get numbers and operation
+    const num1 = await javaStreams.requestInput("Enter first number:");
+    const num2 = await javaStreams.requestInput("Enter second number:");
+    const operation = await javaStreams.requestInput("Enter operation (+, -, *, /):");
+    
+    // Perform calculation (just for simulation)
+    try {
+      const n1 = parseFloat(num1.trim());
+      const n2 = parseFloat(num2.trim());
+      let result;
+      
+      switch (operation.trim()) {
+        case '+':
+          result = n1 + n2;
+          break;
+        case '-':
+          result = n1 - n2;
+          break;
+        case '*':
+          result = n1 * n2;
+          break;
+        case '/':
+          if (n2 === 0) throw new Error("Division by zero");
+          result = n1 / n2;
+          break;
+        default:
+          throw new Error("Invalid operation");
+      }
+      
+      javaStreams.writeOutput(`\nResult: ${n1} ${operation.trim()} ${n2} = ${result}\n`);
+    } catch (error) {
+      javaStreams.writeError(`\nCalculation error: ${error.message}\n`);
+    }
+  }
+  
+  /**
+   * Simulation of BreadMaker.java - Only handles I/O operations and not actual Java logic
+   */
+  async runBreadMakerSimulation() {
+    javaStreams.writeOutput("BreadMaker.java - Scanner Input Simulation\n\n");
+    
+    javaStreams.writeOutput("=== Bread Maker Program ===\n");
+    javaStreams.writeOutput("Status: Ready\n\n");
+    
+    // Get bread type
+    const breadType = await javaStreams.requestInput("Select bread type (1-White, 2-Wheat, 3-Rye):");
+    
+    // Display selected bread info
+    let breadName, cookTime;
+    
+    switch (breadType.trim()) {
+      case '1':
+        breadName = "White Bread";
+        cookTime = "45 minutes";
+        break;
+      case '2':
+        breadName = "Wheat Bread";
+        cookTime = "60 minutes";
+        break;
+      case '3':
+        breadName = "Rye Bread";
+        cookTime = "75 minutes";
+        break;
+      default:
+        breadName = "Unknown";
+        cookTime = "0 minutes";
+    }
+    
+    javaStreams.writeOutput(`\nSelected: ${breadName}\n`);
+    javaStreams.writeOutput(`Cook Time: ${cookTime}\n\n`);
+    
+    // Start cooking?
+    const startCooking = await javaStreams.requestInput("Start cooking? (y/n):");
+    
+    if (startCooking.trim().toLowerCase() === 'y') {
+      javaStreams.writeOutput("\nCooking in progress...\n");
+      javaStreams.writeOutput("------------------------\n");
+      javaStreams.writeOutput("Bread is ready! Enjoy!\n");
+    } else {
+      javaStreams.writeOutput("\nCooking canceled.\n");
+    }
+  }
+}
+
+// Create a singleton instance
+const javaVM = new JavaVirtualMachine();
+
+/**
+ * Main function to run a Java file
+ * @param {string} key The identifier for the Java file to run
+ * @returns {Promise<string>} The output from the Java program execution
+ */
+async function runJavaFile(key) {
+  try {
+    await javaVM.initialize();
+    return await javaVM.runProgram(key);
+  } catch (error) {
+    return `Error: ${error.message}`;
+  }
+}
+
+export { runJavaFile, javaVM };
