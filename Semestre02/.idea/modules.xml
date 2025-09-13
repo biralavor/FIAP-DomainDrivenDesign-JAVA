@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Aula-20-DBconnection/Aula-20-DBconnection.iml" filepath="$PROJECT_DIR$/Aula-20-DBconnection/Aula-20-DBconnection.iml" />
       <module fileurl="file://$PROJECT_DIR$/Aula16-revisao-hierarquia/Aula16-revisao-hierarquia.iml" filepath="$PROJECT_DIR$/Aula16-revisao-hierarquia/Aula16-revisao-hierarquia.iml" />
       <module fileurl="file://$PROJECT_DIR$/Aula17-ArrayList/Aula17-ArrayList.iml" filepath="$PROJECT_DIR$/Aula17-ArrayList/Aula17-ArrayList.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Aula20-DBconnection/Aula20-DBconnection.iml" filepath="$PROJECT_DIR$/Aula20-DBconnection/Aula20-DBconnection.iml" />
       <module fileurl="file://$PROJECT_DIR$/Semestre02.iml" filepath="$PROJECT_DIR$/Semestre02.iml" />
     </modules>
   </component>
